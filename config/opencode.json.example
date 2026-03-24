@@ -1,0 +1,200 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "autoupdate": true,
+  "instructions": [
+    "rules/beads-workflow.md",
+    "rules/drupal-essentials.md",
+    "rules/quality-tools-setup.md",
+    "rules/lessons-learned.md"
+  ],
+  "permission": {
+    "edit": "allow",
+    "write": "allow",
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "webfetch": "allow",
+    "skill": {
+      "*": "allow"
+    },
+    "bash": {
+      "rm -rf /": "deny",
+      "rm -rf /*": "deny",
+      "sudo *": "deny",
+      "git commit*": "deny",
+      "git push*": "deny",
+      "git pull*": "deny",
+      "git add*": "deny",
+      "git merge*": "deny",
+      "git rebase*": "deny",
+      "git checkout*": "deny",
+      "git reset*": "deny",
+      "git stash*": "deny",
+      "git tag*": "deny",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git status*": "allow",
+      "git branch*": "allow",
+      "git show*": "allow",
+      "*": "allow"
+    }
+  },
+  "formatter": {
+    "phpcbf": {
+      "command": ["docker", "exec", "$WEB_CONTAINER", "./vendor/bin/phpcbf", "--standard=Drupal,DrupalPractice", "$FILE"],
+      "extensions": [".php", ".module", ".inc", ".install", ".theme", ".profile"]
+    }
+  },
+  "mcp": {
+    "playwright": {
+      "type": "remote",
+      "url": "http://playwright-mcp:8931/mcp",
+      "enabled": true,
+      "timeout": 30000
+    }
+  },
+  "plugin": ["@mohak34/opencode-notifier@latest"],
+  "agent": {
+    "applier": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "temperature": 0.0,
+      "tools": {
+        "read": true,
+        "edit": true,
+        "write": true,
+        "bash": false,
+        "grep": false,
+        "glob": false,
+        "webfetch": false,
+        "task": false
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "webfetch": "deny"
+      }
+    },
+    "ralph-planner": {
+      "mode": "primary",
+      "model": "anthropic/claude-opus-4-6",
+      "tools": {
+        "read": true,
+        "glob": true,
+        "grep": true,
+        "write": true,
+        "edit": false,
+        "bash": true,
+        "task": false
+      },
+      "permission": {
+        "write": "allow",
+        "bash": { "*": "allow" }
+      }
+    },
+    "sales-copy": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": false, "task": true }
+    },
+    "drupal-dev": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": true, "task": true },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "output-verifier": {
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-6",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": false, "task": true }
+    },
+    "deep-research": {
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-6",
+      "tools": { "read": true, "glob": true, "grep": true, "webfetch": true, "edit": false, "write": false, "bash": false, "task": false }
+    },
+    "drupal-update": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": true, "task": false },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "drupal-test": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": true, "task": true },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "blog-writer": {
+      "mode": "primary",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "write": true, "edit": true, "bash": false },
+      "permission": { "write": "allow", "edit": "allow" }
+    },
+    "drupal-theme": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": true, "task": true },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "three-judges": {
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-6",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": true },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "drupal-perf": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": true, "task": true },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "visual-test": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "write": false, "edit": false, "bash": true },
+      "permission": { "bash": { "*": "allow" } }
+    },
+    "email-responder": {
+      "mode": "primary",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "write": true, "edit": true, "bash": false },
+      "permission": { "write": "allow", "edit": "allow" }
+    },
+    "twig-audit": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "bash": false, "write": false, "edit": false, "task": true }
+    },
+    "code-explorer": {
+      "mode": "subagent",
+      "model": "anthropic/claude-haiku-4-5",
+      "tools": { "read": true, "glob": true, "grep": true, "write": false, "edit": false, "bash": false, "task": false }
+    }
+  },
+  "provider": {
+    "litellm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LiteLLM Proxy",
+      "options": {
+        "baseURL": "http://your-litellm-proxy:4000/v1"
+      },
+      "models": {
+        "claude-opus-4-5": {
+          "name": "Claude Opus 4.5",
+          "limit": { "context": 200000, "output": 64000 }
+        },
+        "claude-sonnet-4-5": {
+          "name": "Claude Sonnet 4.5",
+          "limit": { "context": 200000, "output": 64000 }
+        },
+        "claude-haiku-4-5": {
+          "name": "Claude Haiku 4.5",
+          "limit": { "context": 200000, "output": 64000 }
+        }
+      }
+    }
+  }
+}
