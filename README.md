@@ -65,131 +65,74 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 
 ## Quick Start
 
-### 1. Clone the workspace
-
-```bash
-git clone https://github.com/trebormc/ddev-ai-workspace.git
-cd ddev-ai-workspace
-```
-
-### 2. Set up API credentials
-
-```bash
-cp share/auth.json.example share/auth.json
-```
-
-Edit `share/auth.json` with your API keys:
-
-```json
-{
-  "anthropic": {
-    "type": "oauth",
-    "access": "sk-ant-oat01-YOUR_ACCESS_TOKEN",
-    "refresh": "sk-ant-ort01-YOUR_REFRESH_TOKEN",
-    "expires": 0
-  },
-  "litellm": {
-    "type": "api",
-    "key": "YOUR_LITELLM_API_KEY"
-  }
-}
-```
-
-### 3. Set up OpenCode config (if using OpenCode)
-
-```bash
-cp config/opencode.json.example config/opencode.json
-```
-
-Edit `config/opencode.json` to set your preferred models and provider URLs.
-
-### 4. Install the DDEV add-on in your Drupal project
+### 1. Install everything with one command
 
 ```bash
 cd /path/to/your-drupal-project
+ddev add-on get trebormc/ddev-ai-workspace
+```
 
-# Option A: Interactive OpenCode
+This installs all AI development tools and their dependencies automatically:
+- **ddev-playwright-mcp** -- Headless browser
+- **ddev-beads** -- Task tracking
+- **ddev-agents-sync** -- Agent configuration sync
+- **ddev-opencode** -- OpenCode CLI
+- **ddev-claude-code** -- Claude Code CLI
+- **ddev-ralph** -- Autonomous orchestrator
+
+### 2. Configure API keys
+
+```bash
+ddev ai-setup
+```
+
+The interactive wizard guides you through configuring authentication for Claude Code and OpenCode.
+
+### 3. Start using it
+
+```bash
+ddev restart
+
+# Interactive AI development
+ddev opencode
+ddev claude-code
+
+# Autonomous task execution
+ddev ralph --backend opencode
+
+# Desktop notifications (optional, Linux)
+ddev ai-notify start
+```
+
+## Individual Installation
+
+If you only need specific tools, install them individually:
+
+```bash
+# Just OpenCode
 ddev add-on get trebormc/ddev-opencode
 
-# Option B: Interactive Claude Code
+# Just Claude Code
 ddev add-on get trebormc/ddev-claude-code
 
-# Option C: Autonomous Ralph (needs OpenCode or Claude Code installed first)
+# Just Ralph (needs OpenCode or Claude Code installed first)
 ddev add-on get trebormc/ddev-ralph
 ```
 
 Each add-on automatically installs `ddev-playwright-mcp`, `ddev-beads`, and `ddev-agents-sync` as dependencies.
 
-### 5. Install Drupal agents (for OpenCode users)
-
-```bash
-git clone https://github.com/trebormc/drupal-ai-agents.git ~/drupal-ai-agents
-```
-
-Then in your project's `.ddev/.env.opencode`:
-
-```bash
-HOST_OPENCODE_AUTH_DIR=/path/to/ddev-ai-workspace/share/
-HOST_OPENCODE_CONFIG_DIR=/path/to/drupal-ai-agents/
-```
-
-### 6. Start using it
-
-```bash
-ddev restart
-
-# OpenCode
-ddev opencode
-
-# Claude Code
-ddev claude-code
-
-# Ralph (autonomous)
-ddev ralph --backend opencode
-```
-
-## Configuration
-
-After cloning this workspace, create your local configuration files from the provided examples:
-
-```bash
-# API credentials
-cp share/auth.json.example share/auth.json
-vi share/auth.json
-
-# OpenCode configuration
-cp config/opencode.json.example config/opencode.json
-vi config/opencode.json
-```
-
-Then point your DDEV project's `.env.opencode` to these directories:
-
-```bash
-HOST_OPENCODE_AUTH_DIR=/path/to/ddev-ai-workspace/share/
-HOST_OPENCODE_CONFIG_DIR=/path/to/drupal-ai-agents/
-```
-
-### File structure
-
-| Path | Tracked | Purpose |
-|------|---------|---------|
-| `config/*.json.example` | Yes | Template configs for new users |
-| `config/*.json` | **No** | Your real config (local only) |
-| `share/*.json.example` | Yes | Template credentials for new users |
-| `share/*.json` | **No** | Your real API keys (local only) |
-| `scripts/` | Yes | Shared utilities (notification bridge) |
-
 ## Desktop Notifications
 
-The AI containers can send desktop notifications to your host when they complete a task, encounter an error, or need your attention.
+AI containers can send desktop notifications when tasks complete or need attention. The notification bridge runs on your host machine (not inside Docker) because it needs access to your desktop's notification system.
 
-### Start the notification bridge
+### Usage
 
 ```bash
-./scripts/start-notify-bridge.sh
+ddev ai-notify start    # Start the bridge (port 5454)
+ddev ai-notify stop     # Stop the bridge
+ddev ai-notify status   # Check if running
+ddev ai-notify test     # Send a test notification
 ```
-
-This starts an HTTP server on port 5454 that receives POST requests from Docker containers and triggers `notify-send` + `paplay` on your desktop.
 
 ### How it works
 
@@ -224,14 +167,6 @@ Host (port 5454)
     ]
   }
 }
-```
-
-### Test it
-
-```bash
-curl -X POST http://localhost:5454/notify \
-  -H 'Content-Type: application/json' \
-  -d '{"title":"Test","message":"It works"}'
 ```
 
 ### Requirements (Linux)

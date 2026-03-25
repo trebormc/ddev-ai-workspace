@@ -1,0 +1,68 @@
+name: ddev-ai-workspace
+
+ddev_version_constraint: '>= v1.23.5'
+
+dependencies:
+  - trebormc/ddev-playwright-mcp
+  - trebormc/ddev-beads
+  - trebormc/ddev-agents-sync
+  - trebormc/ddev-opencode
+  - trebormc/ddev-claude-code
+  - trebormc/ddev-ralph
+
+pre_install_actions:
+  - |
+    #ddev-description:Installing DDEV AI Workspace
+    echo "Installing ddev-ai-workspace — all AI development tools for DDEV."
+
+project_files:
+  - commands/host/ai-setup
+  - commands/host/ai-notify
+  - ai-notify-bridge.py
+
+global_files: []
+
+post_install_actions:
+  - |
+    #ddev-description:Making host commands executable
+    chmod +x .ddev/commands/host/ai-setup
+    chmod +x .ddev/commands/host/ai-notify
+  - |
+    #ddev-description:Creating AI workspace environment file
+    if [ ! -f .ddev/.env.ai-workspace ]; then
+      cat > .ddev/.env.ai-workspace << 'ENVEOF'
+    #ddev-generated
+    # AI Workspace notification bridge settings
+    AI_NOTIFY_PORT=5454
+    AI_NOTIFY_SOUND=/usr/share/sounds/freedesktop/stereo/dialog-information.oga
+    ENVEOF
+      echo "Created .ddev/.env.ai-workspace"
+    else
+      echo ".ddev/.env.ai-workspace already exists, skipping."
+    fi
+  - |
+    #ddev-description:Installation complete
+    echo ""
+    echo "=== DDEV AI Workspace installed ==="
+    echo ""
+    echo "All add-ons installed:"
+    echo "  - ddev-playwright-mcp (headless browser)"
+    echo "  - ddev-beads (task tracking)"
+    echo "  - ddev-agents-sync (agent configs)"
+    echo "  - ddev-opencode (OpenCode CLI)"
+    echo "  - ddev-claude-code (Claude Code CLI)"
+    echo "  - ddev-ralph (autonomous orchestrator)"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Run: ddev ai-setup          (configure API keys)"
+    echo "  2. Run: ddev ai-notify start   (desktop notifications)"
+    echo "  3. Run: ddev restart"
+    echo "  4. Run: ddev opencode   or   ddev claude-code"
+    echo ""
+
+removal_actions:
+  - |
+    #ddev-description:Cleaning up AI Workspace
+    echo "AI Workspace meta add-on removed."
+    echo "Note: Individual add-ons are still installed."
+    echo "Remove them individually with: ddev add-on remove <name>"

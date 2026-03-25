@@ -1,0 +1,144 @@
+#!/bin/bash
+
+#ddev-generated
+## Description: Manage the desktop notification bridge for AI containers
+## Usage: ai-notify [start|stop|status|test]
+## Example: "ddev ai-notify start", "ddev ai-notify stop", "ddev ai-notify test"
+## ExecRaw: true
+
+AI_NOTIFY_PORT="${AI_NOTIFY_PORT:-5454}"
+AI_NOTIFY_SOUND="${AI_NOTIFY_SOUND:-/usr/share/sounds/freedesktop/stereo/dialog-information.oga}"
+BRIDGE_SCRIPT=".ddev/ai-notify-bridge.py"
+PID_FILE=".ddev/.ai-notify.pid"
+
+check_dependencies() {
+    local missing=()
+    command -v python3 &>/dev/null || missing+=("python3")
+    command -v notify-send &>/dev/null || missing+=("notify-send (libnotify-bin)")
+    command -v paplay &>/dev/null || missing+=("paplay (pulseaudio-utils)")
+
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "Missing dependencies: ${missing[*]}"
+        echo "Install with: sudo apt install libnotify-bin pulseaudio-utils python3"
+        return 1
+    fi
+    return 0
+}
+
+is_running() {
+    if [ -f "$PID_FILE" ]; then
+        local pid
+        pid=$(cat "$PID_FILE")
+        if kill -0 "$pid" 2>/dev/null; then
+            return 0
+        fi
+        rm -f "$PID_FILE"
+    fi
+    return 1
+}
+
+do_start() {
+    check_dependencies || exit 1
+
+    if is_running; then
+        local pid
+        pid=$(cat "$PID_FILE")
+        echo "Notification bridge is already running (PID: $pid, port: $AI_NOTIFY_PORT)"
+        return 0
+    fi
+
+    if ss -tln 2>/dev/null | grep -q ":${AI_NOTIFY_PORT} "; then
+        echo "Port $AI_NOTIFY_PORT is already in use by another process."
+        echo "Check with: ss -tlnp | grep :$AI_NOTIFY_PORT"
+        exit 1
+    fi
+
+    if [ ! -f "$BRIDGE_SCRIPT" ]; then
+        echo "Error: $BRIDGE_SCRIPT not found."
+        echo "Reinstall with: ddev add-on get trebormc/ddev-ai-workspace"
+        exit 1
+    fi
+
+    nohup python3 "$BRIDGE_SCRIPT" "$AI_NOTIFY_PORT" "$AI_NOTIFY_SOUND" > /dev/null 2>&1 &
+    local pid=$!
+    disown "$pid"
+    echo "$pid" > "$PID_FILE"
+
+    sleep 1
+
+    if kill -0 "$pid" 2>/dev/null; then
+        echo "Notification bridge started (PID: $pid, port: $AI_NOTIFY_PORT)"
+        echo ""
+        echo "Test with: ddev ai-notify test"
+    else
+        rm -f "$PID_FILE"
+        echo "Failed to start notification bridge."
+        exit 1
+    fi
+}
+
+do_stop() {
+    if is_running; then
+        local pid
+        pid=$(cat "$PID_FILE")
+        kill "$pid" 2>/dev/null
+        rm -f "$PID_FILE"
+        echo "Notification bridge stopped (PID: $pid)"
+    else
+        pkill -f "python3.*ai-notify-bridge.*$AI_NOTIFY_PORT" 2>/dev/null
+        echo "Notification bridge is not running."
+    fi
+}
+
+do_status() {
+    if is_running; then
+        local pid
+        pid=$(cat "$PID_FILE")
+        echo "Notification bridge is running (PID: $pid, port: $AI_NOTIFY_PORT)"
+    else
+        echo "Notification bridge is not running."
+    fi
+}
+
+do_test() {
+    if ! is_running; then
+        echo "Notification bridge is not running. Start it first: ddev ai-notify start"
+        exit 1
+    fi
+
+    local response
+    response=$(curl -s -X POST "http://localhost:${AI_NOTIFY_PORT}/notify" \
+        -H 'Content-Type: application/json' \
+        -d '{"title":"DDEV AI","message":"Notification bridge is working"}' 2>&1)
+
+    if echo "$response" | grep -q '"success": true'; then
+        echo "Test notification sent successfully."
+    else
+        echo "Failed to send test notification."
+        echo "Response: $response"
+        exit 1
+    fi
+}
+
+case "$1" in
+    start)
+        do_start
+        ;;
+    stop)
+        do_stop
+        ;;
+    status)
+        do_status
+        ;;
+    test)
+        do_test
+        ;;
+    *)
+        echo "Usage: ddev ai-notify [start|stop|status|test]"
+        echo ""
+        echo "  start   Start the desktop notification bridge"
+        echo "  stop    Stop the notification bridge"
+        echo "  status  Check if the bridge is running"
+        echo "  test    Send a test notification"
+        ;;
+esac
