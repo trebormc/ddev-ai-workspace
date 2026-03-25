@@ -10,21 +10,14 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 ## Architecture
 
 ```
-                          ┌──────────────────┐
-                          │   Your Machine   │
-                          │                  │
-                          │ config/          │ <- Mounted as volume
-                          │ share/auth.json  │ <- Mounted as volume
-                          └────────┬─────────┘
-                                   │
-    ┌──────────────────────────────┼──────────────────────────────┐
-    │                              │          DDEV Network        │
-    │                              ▼                              │
-    │  ┌────────────────┐   ┌──────────────┐   ┌──────────────┐  │
-    │  │   OpenCode     │   │     Web      │   │  Playwright  │  │
-    │  │  (interactive) │──>│   (PHP)      │   │     MCP      │  │
-    │  │ ddev-opencode  │   │   (Drupal)   │   │  (Chromium)  │  │
-    │  └────────┬───────┘   └──────────────┘   └──────────────┘  │
+    ┌────────────────────────────────────────────────────────────┐
+    │                         DDEV Network                       │
+    │                                                            │
+    │  ┌────────────────┐   ┌──────────────┐  ┌──────────────┐  │
+    │  │   OpenCode     │   │     Web      │  │  Playwright  │  │
+    │  │  (interactive) │──>│   (PHP)      │  │     MCP      │  │
+    │  │ ddev-opencode  │   │   (Drupal)   │  │  (Chromium)  │  │
+    │  └────────┬───────┘   └──────────────┘  └──────────────┘  │
     │           │              ^  docker exec      ^  HTTP MCP   │
     │  ┌────────┼───────┐     │                   │              │
     │  │  Claude Code   │─────┘───────────────────┘              │
@@ -37,14 +30,13 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
     │  │    Ralph       │─────┘───────────────────┘              │
     │  │  (orchestrator)│  docker exec --backend opencode|claude │
     │  │ ddev-ralph     │                                        │
-    │  └────────┬───────┘                                        │
-    │           │                                                │
-    │           │  docker exec $BEADS_CONTAINER bd ...           │
-    │           v                                                │
-    │  ┌────────────────┐                                        │
-    │  │    Beads       │  Task tracking (.beads/ in project)    │
-    │  │ ddev-beads     │                                        │
     │  └────────────────┘                                        │
+    │                                                            │
+    │  ┌────────────────┐  ┌────────────────┐                    │
+    │  │  Agents Sync   │  │    Beads       │                    │
+    │  │  (git pull)    │  │  (bd tasks)    │                    │
+    │  │  → /agents vol │  │  → .beads/     │                    │
+    │  └────────────────┘  └────────────────┘                    │
     └────────────────────────────────────────────────────────────┘
           ^ HTTP POST (curl)
           │ http://host.docker.internal:5454/notify
