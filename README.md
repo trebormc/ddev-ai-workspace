@@ -121,9 +121,11 @@ ddev add-on get trebormc/ddev-ralph
 
 Each add-on automatically installs `ddev-playwright-mcp`, `ddev-beads`, and `ddev-agents-sync` as dependencies.
 
-## Desktop Notifications
+## Desktop Notifications (Linux only)
 
 AI containers can send desktop notifications when tasks complete or need attention. The notification bridge runs on your host machine (not inside Docker) because it needs access to your desktop's notification system.
+
+**Note:** Desktop notifications are currently only supported on Linux. The bridge relies on `notify-send` (libnotify) and `paplay` (PulseAudio/PipeWire), which are not available on macOS or Windows.
 
 ### Usage
 
