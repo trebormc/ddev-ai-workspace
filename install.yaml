@@ -24,9 +24,8 @@ global_files: []
 
 post_install_actions:
   - |
-    #ddev-description:Making host commands executable
-    chmod +x .ddev/commands/host/ai-setup
-    chmod +x .ddev/commands/host/ai-notify
+    #ddev-description:Verifying host commands
+    echo "Host commands ai-setup and ai-notify installed."
   - |
     #ddev-description:Creating AI workspace environment file
     if [ ! -f .ddev/.env.ai-workspace ]; then
