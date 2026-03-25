@@ -1,0 +1,39 @@
+name: tests
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '25 08 * * 3'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        ddev_version: [stable]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+      - name: Environment setup
+        run: |
+          brew install ddev/ddev/ddev
+          ddev poweroff
+      - name: Install bats
+        run: brew install bats-core
+      - name: Run tests
+        run: bats tests
