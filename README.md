@@ -34,8 +34,12 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
     │                                                            │
     │  ┌────────────────┐  ┌────────────────┐                    │
     │  │  Agents Sync   │  │    Beads       │                    │
-    │  │  (git pull)    │  │  (bd tasks)    │                    │
-    │  │  → /agents vol │  │  → .beads/     │                    │
+    │  │  (git pull +   │  │  (bd tasks)    │                    │
+    │  │   envsubst)    │  │  → .beads/     │                    │
+    │  │  → /agents-    │  │               │                    │
+    │  │    opencode    │  │               │                    │
+    │  │  → /agents-    │  │               │                    │
+    │  │    claude     │  │               │                    │
     │  └────────────────┘  └────────────────┘                    │
     └────────────────────────────────────────────────────────────┘
           ^ HTTP POST (curl)
@@ -49,10 +53,10 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 **How the pieces fit together:**
 - **ddev-opencode** / **ddev-claude-code** -- Interactive AI development (TUI, shell)
 - **ddev-ralph** -- Autonomous execution (overnight runs, delegates via `docker exec`)
-- **ddev-agents-sync** -- Auto-syncs AI agent repos into a shared volume
+- **ddev-agents-sync** -- Auto-syncs AI agent repos, resolves model tokens, generates tool-specific configs
 - **ddev-beads** -- Git-backed task tracking shared by all AI containers
 - **ddev-playwright-mcp** -- Shared headless browser for all containers
-- **drupal-ai-agents** -- Agent definitions, rules, and skills for OpenCode and Claude Code
+- **drupal-ai-agents** -- Agent definitions, rules, skills, and model token config for both tools
 - **Notification bridge** -- Desktop notifications from containers to your host
 
 ## Quick Start
@@ -72,13 +76,18 @@ This installs all AI development tools and their dependencies automatically:
 - **ddev-claude-code** -- Claude Code CLI
 - **ddev-ralph** -- Autonomous orchestrator
 
-### 2. Configure API keys
+### 2. Configure authentication
 
 ```bash
 ddev ai-setup
 ```
 
-The interactive wizard guides you through configuring authentication for Claude Code and OpenCode.
+The interactive wizard guides you through configuring authentication. Credentials are stored in shared directories on your host -- configure once, all DDEV projects share them automatically:
+
+| Tool | Shared directory | Contains |
+|------|-----------------|----------|
+| Claude Code | `~/.ddev/claude-code/` | OAuth credentials, settings, MCP config |
+| OpenCode | `~/.ddev/opencode/` | API credentials (`auth/`), config overrides (`config/`) |
 
 ### 3. Start using it
 
@@ -143,7 +152,7 @@ Host (port 5454)
 
 **OpenCode:** Notifications are pre-configured in `drupal-ai-agents/opencode-notifier.json` (ships as default -- no setup needed).
 
-**Claude Code:** Add a stop hook to `.claude/settings.json`:
+**Claude Code:** Add a stop hook to `~/.ddev/claude-code/settings.json`:
 
 ```json
 {
@@ -187,13 +196,13 @@ This workspace contains 8 independent git repositories. Each can be installed in
 |------------|-------------|-------------|
 | [ddev-playwright-mcp](https://github.com/trebormc/ddev-playwright-mcp) | Headless [Playwright](https://github.com/anthropics/playwright-mcp) browser as a DDEV service. Exposes an MCP endpoint for browser automation, screenshots, and visual testing. | ddev-opencode, ddev-claude-code, ddev-ralph |
 | [ddev-beads](https://github.com/trebormc/ddev-beads) | [Beads](https://github.com/steveyegge/beads) (bd) git-backed task tracker in a dedicated container. All AI containers delegate task tracking here via `docker exec`. | ddev-opencode, ddev-claude-code, ddev-ralph |
-| [ddev-agents-sync](https://github.com/trebormc/ddev-agents-sync) | Auto-syncs AI agent repositories into a shared Docker volume on every `ddev start`. Supports multiple repos with override priority for private customizations. | ddev-opencode, ddev-claude-code |
+| [ddev-agents-sync](https://github.com/trebormc/ddev-agents-sync) | Auto-syncs AI agent repos, resolves model tokens via `envsubst`, and generates separate configs for OpenCode and Claude Code on every `ddev start`. Supports multiple repos with override priority. | ddev-opencode, ddev-claude-code |
 
 ### Configuration
 
 | Repository | Description |
 |------------|-------------|
-| [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) | 13 specialized agents, 4 rule sets, and 14 skills for Drupal development. Mounted as OpenCode config; also provides `CLAUDE.md` for Claude Code. Not a DDEV add-on -- synced automatically via ddev-agents-sync. |
+| [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) | 13 specialized agents, 4 rule sets, 15 skills, and model token config (`.env.agents`) for Drupal development. Agent `.md` files use fat frontmatter compatible with both tools. Not a DDEV add-on -- synced automatically via ddev-agents-sync. |
 
 ## Disclaimer
 
