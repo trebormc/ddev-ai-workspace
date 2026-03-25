@@ -25,6 +25,7 @@ global_files: []
 post_install_actions:
   - |
     #ddev-description:Verifying host commands
+    mkdir -p .ddev
     echo "Host commands ai-setup and ai-notify installed."
   - |
     #ddev-description:Creating AI workspace environment file
