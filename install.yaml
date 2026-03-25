@@ -25,20 +25,19 @@ global_files: []
 post_install_actions:
   - |
     #ddev-description:Verifying host commands
-    mkdir -p .ddev
     echo "Host commands ai-setup and ai-notify installed."
   - |
     #ddev-description:Creating AI workspace environment file
-    if [ ! -f .ddev/.env.ai-workspace ]; then
-      cat > .ddev/.env.ai-workspace << 'ENVEOF'
+    if [ ! -f .env.ai-workspace ]; then
+      cat > .env.ai-workspace << 'ENVEOF'
     #ddev-generated
     # AI Workspace notification bridge settings
     AI_NOTIFY_PORT=5454
     AI_NOTIFY_SOUND=/usr/share/sounds/freedesktop/stereo/dialog-information.oga
     ENVEOF
-      echo "Created .ddev/.env.ai-workspace"
+      echo "Created .env.ai-workspace"
     else
-      echo ".ddev/.env.ai-workspace already exists, skipping."
+      echo ".env.ai-workspace already exists, skipping."
     fi
   - |
     #ddev-description:Installation complete
