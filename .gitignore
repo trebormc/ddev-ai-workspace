@@ -11,10 +11,6 @@ ddev-ralph/
 drupal-ai-agents/
 private-ai-agents/
 
-# Local config — only .example files are tracked
-config/*
-!config/*.example
-
 # Credentials — only .example files are tracked
 share/*
 !share/*.example
