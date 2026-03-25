@@ -52,7 +52,7 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 - **ddev-agents-sync** -- Auto-syncs AI agent repos into a shared volume
 - **ddev-beads** -- Git-backed task tracking shared by all AI containers
 - **ddev-playwright-mcp** -- Shared headless browser for all containers
-- **drupal-ai-agents** -- Agent definitions, rules, and skills for OpenCode
+- **drupal-ai-agents** -- Agent definitions, rules, and skills for OpenCode and Claude Code
 - **Notification bridge** -- Desktop notifications from containers to your host
 
 ## Quick Start
@@ -111,7 +111,7 @@ ddev add-on get trebormc/ddev-claude-code
 ddev add-on get trebormc/ddev-ralph
 ```
 
-Each add-on automatically installs `ddev-playwright-mcp`, `ddev-beads`, and `ddev-agents-sync` as dependencies.
+OpenCode and Claude Code automatically install `ddev-playwright-mcp`, `ddev-beads`, and `ddev-agents-sync` as dependencies. Ralph installs `ddev-playwright-mcp` and `ddev-beads` (but not `ddev-agents-sync`).
 
 ## Desktop Notifications (Linux only)
 
