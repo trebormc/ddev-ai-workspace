@@ -122,61 +122,18 @@ ddev add-on get trebormc/ddev-ralph
 
 OpenCode and Claude Code automatically install `ddev-playwright-mcp`, `ddev-beads`, and `ddev-agents-sync` as dependencies. Ralph installs `ddev-playwright-mcp` and `ddev-beads` (but not `ddev-agents-sync`).
 
-## Desktop Notifications (Linux only)
+## Desktop Notifications (optional, Linux only)
 
-AI containers can send desktop notifications when tasks complete or need attention. The notification bridge runs on your host machine (not inside Docker) because it needs access to your desktop's notification system.
-
-**Note:** Desktop notifications are currently only supported on Linux. The bridge relies on `notify-send` (libnotify) and `paplay` (PulseAudio/PipeWire), which are not available on macOS or Windows.
-
-### Usage
+AI containers can send desktop notifications when tasks complete or need attention. The notification bridge is a **host-level tool** (not a DDEV add-on) — install it once and all your DDEV projects share it automatically.
 
 ```bash
-ddev ai-notify start    # Start the bridge (port 5454)
-ddev ai-notify stop     # Stop the bridge
-ddev ai-notify status   # Check if running
-ddev ai-notify test     # Send a test notification
+# One-time install on your host machine
+curl -fsSL https://raw.githubusercontent.com/trebormc/ai-notify-bridge/main/install.sh | bash
 ```
 
-### How it works
+This installs a lightweight Python HTTP server that listens on port 5454 and a systemd user service that starts automatically on login. See [ai-notify-bridge](https://github.com/trebormc/ai-notify-bridge) for details.
 
-```
-Container (OpenCode/Claude Code)
-  │  curl -s -X POST http://host.docker.internal:5454/notify
-  │       -H 'Content-Type: application/json'
-  │       -d '{"title":"Task completed","message":"All done"}'
-  v
-Host (port 5454)
-  ├─ notify-send -> Desktop notification
-  └─ paplay      -> System sound
-```
-
-**OpenCode:** Notifications are pre-configured in `drupal-ai-agents/opencode-notifier.json` (ships as default -- no setup needed).
-
-**Claude Code:** Add a stop hook to `~/.ddev/claude-code/settings.json`:
-
-```json
-{
-  "hooks": {
-    "stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://host.docker.internal:5454/notify -H 'Content-Type: application/json' -d '{\"title\":\"Claude Code\",\"message\":\"Session finished\"}'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Requirements (Linux)
-
-```bash
-sudo apt install libnotify-bin pulseaudio-utils
-```
+If the bridge is not running, containers simply get an instant "connection refused" — no timeouts, no errors, no impact on performance.
 
 ## Repositories
 

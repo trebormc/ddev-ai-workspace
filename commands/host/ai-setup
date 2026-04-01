@@ -165,19 +165,6 @@ else
     echo ""
 fi
 
-# --- Notification Bridge ---
-echo "--- Desktop Notifications ---"
-echo ""
-echo "The notification bridge sends desktop notifications from AI containers."
-echo "Start it anytime with: ddev ai-notify start"
-echo ""
-read -rp "Start the notification bridge now? [y/N]: " notify_choice
-
-if [ "$notify_choice" = "y" ] || [ "$notify_choice" = "Y" ]; then
-    ddev ai-notify start
-    echo ""
-fi
-
 # --- Summary ---
 echo "=== Setup Complete ==="
 echo ""
@@ -187,6 +174,8 @@ echo "  2. Run: ddev opencode   or   ddev claude-code"
 echo ""
 echo "Other commands:"
 echo "  ddev ralph --backend opencode   Autonomous task execution"
-echo "  ddev ai-notify start            Desktop notifications"
 echo "  ddev bd list                    View tracked tasks"
+echo ""
+echo "Optional: Desktop notifications (install once on host):"
+echo "  curl -fsSL https://raw.githubusercontent.com/trebormc/ai-notify-bridge/main/install.sh | bash"
 echo ""

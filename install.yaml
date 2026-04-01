@@ -17,8 +17,6 @@ pre_install_actions:
 
 project_files:
   - commands/host/ai-setup
-  - commands/host/ai-notify
-  - ai-notify-bridge.py
 
 global_files: []
 
@@ -26,19 +24,6 @@ post_install_actions:
   - |
     #ddev-description:Verifying host commands
     echo "Host commands ai-setup and ai-notify installed."
-  - |
-    #ddev-description:Creating AI workspace environment file
-    if [ ! -f .env.ai-workspace ]; then
-      cat > .env.ai-workspace << 'ENVEOF'
-    #ddev-generated
-    # AI Workspace notification bridge settings
-    AI_NOTIFY_PORT=5454
-    AI_NOTIFY_SOUND=/usr/share/sounds/freedesktop/stereo/dialog-information.oga
-    ENVEOF
-      echo "Created .env.ai-workspace"
-    else
-      echo ".env.ai-workspace already exists, skipping."
-    fi
   - |
     #ddev-description:Installation complete
     echo ""
@@ -54,9 +39,11 @@ post_install_actions:
     echo ""
     echo "Next steps:"
     echo "  1. Run: ddev ai-setup          (configure API keys)"
-    echo "  2. Run: ddev ai-notify start   (desktop notifications)"
-    echo "  3. Run: ddev restart"
-    echo "  4. Run: ddev opencode   or   ddev claude-code"
+    echo "  2. Run: ddev restart"
+    echo "  3. Run: ddev opencode   or   ddev claude-code"
+    echo ""
+    echo "Optional: Desktop notifications (install once on host):"
+    echo "  curl -fsSL https://raw.githubusercontent.com/trebormc/ai-notify-bridge/main/install.sh | bash"
     echo ""
 
 removal_actions:
