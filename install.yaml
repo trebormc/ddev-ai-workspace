@@ -15,15 +15,11 @@ pre_install_actions:
     #ddev-description:Installing DDEV AI Workspace
     echo "Installing ddev-ai-workspace — all AI development tools for DDEV."
 
-project_files:
-  - commands/host/ai-setup
+project_files: []
 
 global_files: []
 
 post_install_actions:
-  - |
-    #ddev-description:Verifying host commands
-    echo "Host command ai-setup installed."
   - |
     #ddev-description:Installation complete
     echo ""
@@ -38,9 +34,9 @@ post_install_actions:
     echo "  - ddev-ralph (autonomous orchestrator)"
     echo ""
     echo "Next steps:"
-    echo "  1. Run: ddev ai-setup          (configure API keys)"
-    echo "  2. Run: ddev restart"
-    echo "  3. Run: ddev opencode   or   ddev claude-code"
+    echo "  1. Run: ddev restart"
+    echo "  2. Run: ddev opencode   or   ddev claude-code"
+    echo "     (each tool guides you through authentication on first launch)"
     echo ""
     echo "Optional: Desktop notifications (install once on host):"
     echo "  curl -fsSL https://raw.githubusercontent.com/trebormc/ai-notify-bridge/main/install.sh | bash"
