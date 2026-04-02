@@ -23,7 +23,7 @@ global_files: []
 post_install_actions:
   - |
     #ddev-description:Verifying host commands
-    echo "Host commands ai-setup and ai-notify installed."
+    echo "Host command ai-setup installed."
   - |
     #ddev-description:Installation complete
     echo ""

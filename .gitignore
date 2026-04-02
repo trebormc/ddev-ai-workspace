@@ -1,20 +1,2 @@
 # IDE
 .idea/
-
-# Sub-repos (have their own git)
-ddev-playwright-mcp/
-ddev-beads/
-ddev-agents-sync/
-ddev-opencode/
-ddev-claude-code/
-ddev-ralph/
-drupal-ai-agents/
-private-ai-agents/
-
-# Credentials — only .example files are tracked
-share/*
-!share/*.example
-
-# Claude Code local config
-/.claude
-CLAUDE.md
