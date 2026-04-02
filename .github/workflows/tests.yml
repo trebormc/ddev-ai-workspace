@@ -34,6 +34,6 @@ jobs:
           brew install ddev/ddev/ddev
           ddev poweroff
       - name: Install bats
-        run: brew install bats-core
+        run: brew install bats-core bats-assert bats-support
       - name: Run tests
         run: bats tests

@@ -1,5 +1,8 @@
 setup() {
   set -eu -o pipefail
+  export BATS_LIB_PATH="${BATS_LIB_PATH:-}:$(brew --prefix)/lib"
+  bats_load_library bats-assert
+  bats_load_library bats-support
   export DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && pwd )/.."
   export TESTDIR=~/tmp/test-ddev-ai-workspace
   mkdir -p $TESTDIR
