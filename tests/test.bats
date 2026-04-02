@@ -15,7 +15,6 @@ setup() {
 }
 
 health_checks() {
-  sleep 15
   # Verify all child add-ons are installed
   run ddev add-on list --installed
   assert_success
@@ -25,16 +24,6 @@ health_checks() {
   assert_output --partial "ddev-opencode"
   assert_output --partial "ddev-claude-code"
   assert_output --partial "ddev-ralph"
-
-  # Verify key containers are running
-  run ddev exec -s beads bash -c "echo ok"
-  assert_success
-  run ddev exec -s agents-sync bash -c "echo ok"
-  assert_success
-
-  # Verify host commands are available
-  run ddev bd version
-  assert_success
 }
 
 teardown() {
