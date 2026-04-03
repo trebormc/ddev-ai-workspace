@@ -21,11 +21,23 @@ global_files: []
 
 post_install_actions:
   - |
+    #ddev-description:Updating child add-ons
+    echo "Updating all child add-ons to latest version..."
+    ddev add-on get trebormc/ddev-playwright-mcp
+    ddev add-on get trebormc/ddev-beads
+    ddev add-on get trebormc/ddev-agents-sync
+    ddev add-on get trebormc/ddev-opencode
+    ddev add-on get trebormc/ddev-claude-code
+    ddev add-on get trebormc/ddev-ralph
+  - |
+    #ddev-description:Pulling latest Docker images
+    docker pull ${PLAYWRIGHT_MCP_IMAGE:-mcr.microsoft.com/playwright/mcp:latest}
+  - |
     #ddev-description:Installation complete
     echo ""
-    echo "=== DDEV AI Workspace installed ==="
+    echo "=== DDEV AI Workspace installed/updated ==="
     echo ""
-    echo "All add-ons installed:"
+    echo "All add-ons updated:"
     echo "  - ddev-playwright-mcp (headless browser)"
     echo "  - ddev-beads (task tracking)"
     echo "  - ddev-agents-sync (agent configs)"
