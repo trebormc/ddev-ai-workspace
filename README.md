@@ -18,54 +18,49 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 ## Architecture
 
 ```
-    ┌────────────────────────────────────────────────────────────┐
-    │                         DDEV Network                       │
-    │                                                            │
-    │  ┌────────────────┐   ┌──────────────┐  ┌──────────────┐  │
-    │  │   OpenCode     │   │     Web      │  │  Playwright  │  │
-    │  │  (interactive) │──>│   (PHP)      │  │     MCP      │  │
-    │  │ ddev-opencode  │   │   (Drupal)   │  │  (Chromium)  │  │
-    │  └────────┬───────┘   └──────────────┘  └──────────────┘  │
-    │           │              ^  docker exec      ^  HTTP MCP   │
-    │  ┌────────┼───────┐     │                   │              │
-    │  │  Claude Code   │─────┘───────────────────┘              │
-    │  │  (interactive) │                                        │
-    │  │ ddev-claude-   │                                        │
-    │  │   code         │                                        │
-    │  └────────┬───────┘                                        │
-    │           │              ^  docker exec      ^  HTTP MCP   │
-    │  ┌────────┼───────┐     │                   │              │
-    │  │    Ralph       │─────┘───────────────────┘              │
-    │  │  (orchestrator)│  docker exec --backend opencode|claude │
-    │  │ ddev-ralph     │                                        │
-    │  └────────────────┘                                        │
-    │                                                            │
-    │  ┌────────────────┐  ┌────────────────┐                    │
-    │  │  Agents Sync   │  │    Beads       │                    │
-    │  │  (git pull +   │  │  (bd tasks)    │                    │
-    │  │   envsubst)    │  │  → .beads/     │                    │
-    │  │  → /agents-    │  │               │                    │
-    │  │    opencode    │  │               │                    │
-    │  │  → /agents-    │  │               │                    │
-    │  │    claude     │  │               │                    │
-    │  └────────────────┘  └────────────────┘                    │
-    └────────────────────────────────────────────────────────────┘
-          ^ HTTP POST (curl)
-          │ http://host.docker.internal:5454/notify
-    ┌─────┴──────────────────┐
-    │  Notification Bridge   │  <- ai-notify-bridge (standalone)
-    │  (host, port 5454)     │     notify-send + paplay
-    └────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                        DDEV Network                          │
+│                                                              │
+│  ┌────────────┐   ┌────────────┐   ┌────────────┐            │
+│  │   Beads    │   │   Agents   │   │ Playwright │            │
+│  │  (tasks)   │   │    Sync    │   │    MCP     │            │
+│  │            │   │ (git+conf) │   │ (Chromium) │            │
+│  └─────┬──────┘   └──────┬─────┘   └─────┬──────┘            │
+│        │                 │               │                   │
+│        │  bd commands    │  volumes      │  HTTP MCP         │
+│        ▼                 ▼               ▼                   │
+│  ┌────────────────────────────────────────────────────┐      │
+│  │              OpenCode  ·  Claude Code              │      │
+│  │           (interactive AI development)             │      │
+│  └───────────────────────┬────────────────────────────┘      │
+│             ▲            │                                   │
+│  docker exec│            │ docker exec                       │
+│             │            ▼                                   │
+│  ┌──────────┴──┐   ┌──────────────┐                          │
+│  │    Ralph    │   │     Web      │                          │
+│  │(orchestrator│   │   (Drupal)   │                          │
+│  │  overnight) │   │  PHP, Drush  │                          │
+│  └─────────────┘   └──────────────┘                          │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+        │  HTTP POST (optional)
+        ▼
+ ┌──────────────┐
+ │ Notify Bridge│  Host (port 5454)
+ └──────────────┘
 ```
 
 **How the pieces fit together:**
-- **ddev-opencode** / **ddev-claude-code**: Interactive AI development (TUI, shell)
-- **ddev-ralph**: Autonomous execution (overnight runs, delegates via `docker exec`)
-- **ddev-agents-sync**: Auto-syncs AI agent repos, resolves model tokens, generates tool-specific configs
-- **ddev-beads**: Git-backed task tracking shared by all AI containers
-- **ddev-playwright-mcp**: Shared headless browser for all containers
-- **drupal-ai-agents**: Agent definitions, rules, skills, and model token config for both tools
-- **Notification bridge**: Desktop notifications from containers to your host
+
+| Container | Role | Used by |
+|-----------|------|---------|
+| **Beads** | Git-backed task tracking (.beads/) | OpenCode, Claude Code, Ralph |
+| **Agents Sync** | Syncs agent repos, resolves model tokens | OpenCode, Claude Code (via volumes) |
+| **Playwright MCP** | Headless Chromium for screenshots and browser testing | OpenCode, Claude Code |
+| **OpenCode** | Interactive AI development (TUI) | Connects to Web, Playwright, Beads |
+| **Claude Code** | Interactive AI development (TUI) | Connects to Web, Playwright, Beads |
+| **Ralph** | Autonomous orchestrator (overnight runs) | Delegates to OpenCode or Claude Code |
+| **Web** | PHP, Drupal, Drush, Composer | Receives commands from AI containers |
 
 ## Quick Start
 
