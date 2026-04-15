@@ -1,6 +1,10 @@
 # DDEV AI -- AI-Assisted Drupal Development
 
-A set of DDEV add-ons and configurations that bring AI-powered development tools into your Drupal project. Run OpenCode or Claude Code in dedicated containers, automate tasks with Ralph, and use 13 specialized Drupal agents -- all inside your existing DDEV environment.
+A set of DDEV add-ons and configurations that bring AI-powered development tools into your **Drupal** project. Run OpenCode or Claude Code in dedicated containers, automate tasks with Ralph, and use 13 specialized Drupal agents -- all inside your existing DDEV environment.
+
+> **Built for Drupal.** This workspace is designed specifically for Drupal 10/11 development. AI agents understand Drupal APIs, coding standards, caching, render arrays, and the module/theme ecosystem out of the box.
+>
+> Created by [Robert Menetray](https://menetray.com) · Sponsored by [DruScan](https://druscan.com) — Drupal site auditing and monitoring tools.
 
 ## Prerequisites
 
@@ -163,11 +167,9 @@ To remove individual add-ons, see each add-on's README for specific uninstall in
 
 ## Disclaimer
 
-This project is an independent initiative by [Robert Menetray](https://menetray.com) and is **not affiliated with, endorsed by, or sponsored by** Anthropic (Claude Code), OpenCode, Beads, Playwright, Microsoft, or DDEV. These are third-party tools integrated here for convenience.
+This project is an independent initiative by [Robert Menetray](https://menetray.com), sponsored by [DruScan](https://druscan.com). It is **not affiliated with, endorsed by, or sponsored by** Anthropic (Claude Code), OpenCode, Beads, Playwright, Microsoft, or DDEV. These are third-party tools integrated here for convenience.
 
 AI-generated code may contain errors, security issues, or unintended behavior. **Always review AI-generated changes before deploying to production.** Unattended autonomous execution (e.g., Ralph Loop) should be followed by a thorough human review. The author assumes no responsibility for damages caused by the use or misuse of these configurations or the code they produce.
-
-For more information, visit [menetray.com](https://menetray.com). For Drupal site auditing tools that complement this project, see [DruScan](https://druscan.com).
 
 ## License
 
