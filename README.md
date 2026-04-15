@@ -1,3 +1,7 @@
+[![add-on registry](https://img.shields.io/badge/DDEV-Add--on_Registry-blue)](https://addons.ddev.com)
+[![last commit](https://img.shields.io/github/last-commit/trebormc/ddev-ai-workspace)](https://github.com/trebormc/ddev-ai-workspace/commits)
+[![release](https://img.shields.io/github/v/release/trebormc/ddev-ai-workspace)](https://github.com/trebormc/ddev-ai-workspace/releases/latest)
+
 # DDEV AI -- AI-Assisted Drupal Development
 
 A set of DDEV add-ons and configurations that bring AI-powered development tools into your **Drupal** project. Run OpenCode or Claude Code in dedicated containers, automate tasks with Ralph, and use 13 specialized Drupal agents. All inside your existing DDEV environment.
