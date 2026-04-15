@@ -99,6 +99,23 @@ Credentials are stored in shared directories on your host. Configure once and al
 | Claude Code | `~/.ddev/claude-code/` | OAuth credentials, settings, MCP config |
 | OpenCode | `~/.ddev/opencode/` | API credentials (`auth.json`), config overrides (`config/`) |
 
+## Why both OpenCode and Claude Code?
+
+The workspace installs both AI tools because they serve different purposes and complement each other well.
+
+**Claude Code** is the most popular AI coding tool today. It works with an Anthropic subscription (Max plan), which gives access to the most capable models (Opus, Sonnet). This subscription can only be used inside Claude Code, not in other tools. It is the best option for complex tasks like architecture decisions, large refactors, or multi-file changes.
+
+**OpenCode** is an open-source alternative that connects to multiple AI providers. It works great with free APIs for people who are getting started or want to keep costs low. The free models are less capable, so they work best for simpler tasks. OpenCode also supports paid APIs (Anthropic, OpenAI) and services like OpenCode Zen, which gives access to API models at a lower cost.
+
+In practice, having both tools in the same project gives you flexibility:
+
+- Use **Claude Code** for complex tasks where you need the best models.
+- Use **OpenCode** for simpler tasks where a free or cheaper model is enough.
+- If one provider is down, you can switch to the other without losing your workflow.
+- You are not locked into a single vendor.
+
+You can install only one of them if you prefer (see Individual Installation below). The workspace installs both by default so you can choose based on the task at hand.
+
 ## Individual Installation
 
 If you only need specific tools, install them individually:
