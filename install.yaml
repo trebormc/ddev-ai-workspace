@@ -1,6 +1,6 @@
 name: ddev-ai-workspace
 
-ddev_version_constraint: '>= v1.23.5'
+ddev_version_constraint: '>= v1.24.10'
 
 dependencies:
   - trebormc/ddev-playwright-mcp

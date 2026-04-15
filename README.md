@@ -8,7 +8,7 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 
 ## Prerequisites
 
-- [DDEV](https://ddev.readthedocs.io/) >= v1.23.5
+- [DDEV](https://ddev.readthedocs.io/) >= v1.24.10
 - An API key (Anthropic, OpenAI, or a LiteLLM proxy)
 
 ## Architecture
