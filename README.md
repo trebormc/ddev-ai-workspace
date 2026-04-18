@@ -34,7 +34,7 @@ A set of DDEV add-ons and configurations that bring AI-powered development tools
 │  │           (interactive AI development)             │      │
 │  └───────────────────────┬────────────────────────────┘      │
 │             ▲            │                                   │
-│  docker exec│            │ docker exec                       │
+│         SSH │            │ SSH                               │
 │             │            ▼                                   │
 │  ┌──────────┴──┐   ┌──────────────┐                          │
 │  │    Ralph    │   │     Web      │                          │
@@ -131,7 +131,7 @@ ddev add-on get trebormc/ddev-claude-code
 ddev add-on get trebormc/ddev-ralph
 ```
 
-OpenCode and Claude Code automatically install `ddev-playwright-mcp`, `ddev-beads`, and `ddev-agents-sync` as dependencies. Ralph installs `ddev-playwright-mcp` and `ddev-beads` (but not `ddev-agents-sync`).
+OpenCode and Claude Code automatically install `ddev-playwright-mcp`, `ddev-beads`, `ddev-agents-sync`, and `ddev-ai-ssh` as dependencies. Ralph installs `ddev-playwright-mcp` and `ddev-beads` (but not `ddev-agents-sync` or `ddev-ai-ssh`).
 
 ## Desktop Notifications (optional, Linux only)
 
@@ -148,7 +148,7 @@ If the bridge is not running, containers simply get an instant "connection refus
 
 ## Repositories
 
-This workspace contains 8 independent git repositories. Each can be installed individually or all at once via `ddev add-on get trebormc/ddev-ai-workspace`.
+This workspace contains 9 independent git repositories. Each can be installed individually or all at once via `ddev add-on get trebormc/ddev-ai-workspace`.
 
 ### AI Tools (interactive and autonomous)
 
@@ -156,15 +156,16 @@ This workspace contains 8 independent git repositories. Each can be installed in
 |------------|-------------|---------------|
 | [ddev-opencode](https://github.com/trebormc/ddev-opencode) | [OpenCode](https://opencode.ai) AI CLI in a dedicated container. Interactive TUI and shell for AI-powered Drupal development. | ddev-playwright-mcp, ddev-beads, ddev-agents-sync |
 | [ddev-claude-code](https://github.com/trebormc/ddev-claude-code) | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (Anthropic CLI) in a dedicated container. Interactive AI development with OAuth or API key auth. | ddev-playwright-mcp, ddev-beads, ddev-agents-sync |
-| [ddev-ralph](https://github.com/trebormc/ddev-ralph) | Autonomous AI task orchestrator. Delegates work to OpenCode or Claude Code via `docker exec` and tracks progress with Beads. Ideal for overnight unattended runs. | ddev-playwright-mcp, ddev-beads |
+| [ddev-ralph](https://github.com/trebormc/ddev-ralph) | Autonomous AI task orchestrator. Delegates work to OpenCode or Claude Code via SSH and tracks progress with Beads. Ideal for overnight unattended runs. | ddev-playwright-mcp, ddev-beads |
 
 ### Shared Dependencies (auto-installed)
 
 | Repository | Description | Required by |
 |------------|-------------|-------------|
 | [ddev-playwright-mcp](https://github.com/trebormc/ddev-playwright-mcp) | Headless [Playwright](https://github.com/anthropics/playwright-mcp) browser as a DDEV service. Exposes an MCP endpoint for browser automation, screenshots, and visual testing. | ddev-opencode, ddev-claude-code, ddev-ralph |
-| [ddev-beads](https://github.com/trebormc/ddev-beads) | [Beads](https://github.com/steveyegge/beads) (bd) git-backed task tracker in a dedicated container. All AI containers delegate task tracking here via `docker exec`. | ddev-opencode, ddev-claude-code, ddev-ralph |
+| [ddev-beads](https://github.com/trebormc/ddev-beads) | [Beads](https://github.com/steveyegge/beads) (bd) git-backed task tracker in a dedicated container. All AI containers delegate task tracking here via SSH. | ddev-opencode, ddev-claude-code, ddev-ralph |
 | [ddev-agents-sync](https://github.com/trebormc/ddev-agents-sync) | Auto-syncs AI agent repos, resolves model tokens via `envsubst`, and generates separate configs for OpenCode and Claude Code on every `ddev start`. Supports multiple repos with override priority. | ddev-opencode, ddev-claude-code |
+| [ddev-ai-ssh](https://github.com/trebormc/ddev-ai-ssh) | SSH access to the web container for AI agents. Generates per-project SSH keys and installs sshd. | ddev-opencode, ddev-claude-code |
 
 ### Configuration
 
