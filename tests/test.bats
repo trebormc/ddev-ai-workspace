@@ -55,7 +55,8 @@ teardown() {
   if [ -n "${GITHUB_ENV:-}" ]; then
     [ -e "${GITHUB_ENV:-}" ] && echo "TESTDIR=${HOME}/tmp/${PROJNAME}" >> "${GITHUB_ENV}"
   else
-    [ "${TESTDIR}" != "" ] && rm -rf "${TESTDIR}"
+    # agents-sync creates files owned by container UID, so sudo may be needed
+    [ "${TESTDIR}" != "" ] && (rm -rf "${TESTDIR}" 2>/dev/null || sudo rm -rf "${TESTDIR}")
   fi
 }
 
