@@ -4,7 +4,7 @@
 
 # DDEV AI -- AI-Assisted Drupal Development
 
-A set of DDEV add-ons and configurations that bring AI-powered development tools into your **Drupal** project. Run OpenCode or Claude Code in dedicated containers, automate tasks with Ralph, and use 13 specialized Drupal agents. All inside your existing DDEV environment.
+A set of DDEV add-ons and configurations that bring AI-powered development tools into your **Drupal** project. Run OpenCode or Claude Code in dedicated containers, automate tasks with Ralph, and use 10 specialized Drupal agents. All inside your existing DDEV environment.
 
 > **Built for Drupal.** This workspace is designed specifically for Drupal 10/11 development. AI agents understand Drupal APIs, coding standards, caching, render arrays, and the module/theme ecosystem out of the box.
 >
@@ -170,7 +170,7 @@ This workspace contains 8 independent git repositories. Each can be installed in
 
 | Repository | Description |
 |------------|-------------|
-| [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) | 13 specialized agents, 4 rule sets, 15 skills, and model token config (`.env.agents`) for Drupal development. Agent `.md` files use fat frontmatter compatible with both tools. Not a DDEV add-on (synced automatically via ddev-agents-sync). |
+| [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) | 10 specialized agents, 12 rule sets, 24 skills, and model token config (`.env.agents`) for Drupal development. Agent `.md` files use fat frontmatter compatible with both tools. Not a DDEV add-on (synced automatically via ddev-agents-sync). |
 
 ## Uninstallation
 
