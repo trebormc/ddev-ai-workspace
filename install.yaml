@@ -3,6 +3,7 @@ name: ddev-ai-workspace
 ddev_version_constraint: '>= v1.24.10'
 
 dependencies:
+  - trebormc/ddev-ai-ssh
   - trebormc/ddev-playwright-mcp
   - trebormc/ddev-beads
   - trebormc/ddev-agents-sync
@@ -23,6 +24,7 @@ post_install_actions:
   - |
     #ddev-description:Updating child add-ons
     echo "Updating all child add-ons to latest version..."
+    ddev add-on get trebormc/ddev-ai-ssh
     ddev add-on get trebormc/ddev-playwright-mcp
     ddev add-on get trebormc/ddev-beads
     ddev add-on get trebormc/ddev-agents-sync
@@ -38,6 +40,7 @@ post_install_actions:
     echo "=== DDEV AI Workspace installed/updated ==="
     echo ""
     echo "All add-ons updated:"
+    echo "  - ddev-ai-ssh (SSH access to web)"
     echo "  - ddev-playwright-mcp (headless browser)"
     echo "  - ddev-beads (task tracking)"
     echo "  - ddev-agents-sync (agent configs)"
