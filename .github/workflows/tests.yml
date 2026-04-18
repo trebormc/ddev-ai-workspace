@@ -1,39 +1,45 @@
 name: tests
 on:
   pull_request:
+    paths-ignore:
+      - "**.md"
   push:
     branches: [ main ]
+    paths-ignore:
+      - "**.md"
+
   schedule:
     - cron: '25 08 * * 3'
-  workflow_dispatch:
 
-defaults:
-  run:
-    shell: bash
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: Debug with tmate
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
   tests:
-    defaults:
-      run:
-        shell: bash
     strategy:
       matrix:
-        ddev_version: [stable]
+        ddev_version: [stable, HEAD]
       fail-fast: false
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-      - name: Environment setup
-        run: |
-          brew install ddev/ddev/ddev
-          ddev poweroff
-      - name: Install bats
-        run: brew tap bats-core/bats-core && brew install bats-core bats-assert bats-support
-      - name: Run tests
-        run: bats tests
+      - uses: ddev/github-action-add-on-test@v2
+        with:
+          ddev_version: ${{ matrix.ddev_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          debug_enabled: ${{ github.event.inputs.debug_enabled }}
+          addon_repository: ${{ env.GITHUB_REPOSITORY }}
+          addon_ref: ${{ env.GITHUB_REF }}
