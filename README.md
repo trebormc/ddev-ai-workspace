@@ -4,7 +4,7 @@
 
 # DDEV AI Workspace -- AI-Assisted Drupal Development
 
-One command installs a complete AI development stack inside your existing DDEV project: OpenCode and Claude Code in their own containers, a headless browser, a task tracker, an autonomous task runner, a parallel-candidates arena, and a pack of 11 Drupal agents, 17 rules and 38 skills that all of them share.
+One command installs a complete AI development stack inside your existing DDEV project: OpenCode and Claude Code in their own containers, a headless browser, a task tracker, an autonomous task runner, and a pack of 11 Drupal agents, 17 rules and 38 skills that all of them share. A separate host package, ddev-ai-arena, adds parallel candidates in isolated copies of the project.
 
 > **Built for Drupal.** The agents understand Drupal 10/11 APIs, coding standards, caching, render arrays, testing and the module/theme ecosystem out of the box.
 >
@@ -16,7 +16,7 @@ One command installs a complete AI development stack inside your existing DDEV p
 |---|---|---|
 | Work interactively with an AI agent on your Drupal code | `ddev claude-code` or `ddev opencode` | [ddev-claude-code](https://github.com/trebormc/ddev-claude-code), [ddev-opencode](https://github.com/trebormc/ddev-opencode) |
 | Leave a list of tasks running unattended (overnight) | `ddev ralph --backend claude` | [ddev-ralph](https://github.com/trebormc/ddev-ralph) |
-| Have several agents attempt the same task in isolated copies and keep the best | `ddev ai-arena ...` (from your host AI harness) | [ddev-ai-arena](https://github.com/trebormc/ddev-ai-arena) |
+| Have several agents attempt the same task in isolated copies and keep the best | `ai-arena ...` from your host AI harness, in a coordinator project above your environments | [ddev-ai-arena](https://github.com/trebormc/ddev-ai-arena) (host package) |
 | Track tasks across agents and sessions | `ddev bd ready` | [ddev-beads](https://github.com/trebormc/ddev-beads) |
 | Let agents open your site in a real browser | automatic (Playwright MCP) | [ddev-playwright-mcp](https://github.com/trebormc/ddev-playwright-mcp) |
 | Keep agents, rules and skills up to date in every project | automatic on `ddev start` | [ddev-agents-sync](https://github.com/trebormc/ddev-agents-sync) + [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) |
@@ -50,7 +50,6 @@ Then, when you need them:
 
 ```bash
 ddev ralph --backend claude          # autonomous loop over requirements.md and Beads tasks
-ddev ai-arena doctor                 # check the host before your first arena
 ddev bd ready                        # task tracker
 ```
 
@@ -58,7 +57,7 @@ ddev bd ready                        # task tracker
 
 ```
 HOST
- ├─ your AI harness (Claude Code / OpenCode) ── ddev ai-arena ──▶ candidate projects
+ ├─ your AI harness (Claude Code / OpenCode) in a coordinator project ── ai-arena ──▶ candidate copies of this project
  └─ ai-notify-bridge (optional desktop notifications, port 5454)
 
 DDEV Network (one project)
@@ -77,7 +76,7 @@ DDEV Network (one project)
 | **Playwright MCP** | Real browser for screenshots and UI verification | Claude Code, OpenCode |
 | **Agents Sync** | Clones the agent repos, resolves model tokens, generates per-tool configs | Claude Code, OpenCode |
 | **Ralph** | Loops over Beads tasks and delegates each one to an AI container | You (overnight runs) |
-| **ai-arena** | Host command: N candidates in isolated worktrees, mechanical gates, blind judge | Your host AI harness |
+| **ai-arena** | Host package (skill + scripts), run from a coordinator project above your environments: N candidates in isolated worktrees, mechanical gates, blind judge | Your host AI harness |
 | **ai-ssh** | sshd in the web container with per-project keys | Every AI container |
 
 ## The three ways to work
@@ -86,7 +85,7 @@ DDEV Network (one project)
 
 **Autonomous.** Write `requirements.md`, run `ddev ralph`. Ralph plans Beads tasks, then executes them one by one through an AI container until none is left, leaving a decision trail in the task notes. Audit fixers and test generators ship ready to run.
 
-**Arena.** From the AI harness on your host, ask for an arena. `ddev ai-arena` creates one git worktree with its own DDEV project and database per candidate, runs each candidate detached in its own AI container (different harnesses and models if you like), verifies them mechanically (site bootstrap, PHPStan, PHPCS, PHPUnit), lets a project-manager session judge the diffs blind, and promotes the winner to a `feature/` branch. Questions bubble up to you only when a human must decide.
+**Arena.** From the AI harness on your host, opened in a small coordinator project that sits above your environments (a generic DDEV project with this workspace installed, no Drupal), ask for an arena. `ai-arena` creates one git worktree with its own DDEV project and database per candidate (each a copy of this workspace), runs each candidate detached in its own AI container (different harnesses and models if you like), verifies them mechanically (site bootstrap, PHPStan, PHPCS, PHPUnit), lets a project-manager session judge the diffs blind, and promotes the winner to a `feature/` branch. Questions bubble up to you only when a human must decide. It is a host package installed once with its own `install.sh`, not a DDEV add-on.
 
 ## Why both OpenCode and Claude Code?
 
@@ -102,7 +101,6 @@ Having both in the same project means you pick per task, keep working if one pro
 ddev add-on get trebormc/ddev-opencode      # OpenCode (+ ai-ssh, beads, playwright-mcp, agents-sync)
 ddev add-on get trebormc/ddev-claude-code   # Claude Code (same dependencies)
 ddev add-on get trebormc/ddev-ralph         # Ralph (needs OpenCode or Claude Code first)
-ddev add-on get trebormc/ddev-ai-arena      # Arena (host command; needs the AI containers to run)
 ```
 
 ## Desktop notifications (optional, Linux only)
@@ -126,7 +124,7 @@ This workspace is 10 independent git repositories. Install them all with this me
 | [ddev-claude-code](https://github.com/trebormc/ddev-claude-code) | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) in a dedicated container. Interactive TUI, OAuth or API key, shared credentials across projects. | ai-ssh, playwright-mcp, beads, agents-sync |
 | [ddev-opencode](https://github.com/trebormc/ddev-opencode) | [OpenCode](https://opencode.ai) in a dedicated container. Interactive TUI, any provider, shared credentials across projects. | ai-ssh, playwright-mcp, beads, agents-sync |
 | [ddev-ralph](https://github.com/trebormc/ddev-ralph) | Autonomous task orchestrator. Plans Beads tasks from `requirements.md` and delegates each one to an AI container over SSH. | playwright-mcp, beads |
-| [ddev-ai-arena](https://github.com/trebormc/ddev-ai-arena) | Host command that runs N AI candidates in isolated worktree environments, gates them mechanically and judges them blind. Ships a skill for your host AI harness. | — |
+| [ddev-ai-arena](https://github.com/trebormc/ddev-ai-arena) | Host package (a skill for your host AI harness plus scripts) that runs N AI candidates in isolated worktree environments, gates them mechanically and judges them blind. Runs from a coordinator project that has this workspace installed. | not a DDEV add-on |
 
 ### Shared dependencies
 
