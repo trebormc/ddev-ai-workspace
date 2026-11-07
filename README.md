@@ -4,7 +4,7 @@
 
 # DDEV AI Workspace -- AI-Assisted Drupal Development
 
-One command installs a complete AI development stack inside your existing DDEV project: OpenCode and Claude Code in their own containers, a headless browser, a task tracker, an autonomous task runner, and a pack of 11 Drupal agents, 15 rules and 39 skills that all of them share. A separate host package, ddev-ai-arena, adds parallel candidates in isolated copies of the project.
+One command installs a complete AI development stack inside your existing DDEV project: OpenCode and Claude Code in their own containers, a headless browser, a task tracker, an autonomous task runner, and a pack of 11 Drupal agents, 15 rules and 38 skills that all of them share. A separate host package, ddev-ai-arena, adds parallel candidates in isolated copies of the project.
 
 > **Built for Drupal.** The agents understand Drupal 10/11 APIs, coding standards, caching, render arrays, testing and the module/theme ecosystem out of the box.
 >
@@ -139,7 +139,7 @@ This workspace is 10 independent git repositories. Install them all with this me
 
 | Repository | Description |
 |------------|-------------|
-| [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) | 11 agents, 15 rules and 39 skills for Drupal 10/11: backend, theming, tests, a seven-judge code review with implementation contracts, task playbooks, engineering principles, blast-radius analysis, project verification skills, technical writing and the arena protocol. Not a DDEV add-on: synced automatically by ddev-agents-sync. Add a private repo of your own after it to override or extend. |
+| [drupal-ai-agents](https://github.com/trebormc/drupal-ai-agents) | 11 agents, 15 rules and 38 skills for Drupal 10/11: backend, theming, tests, a seven-judge code review with implementation contracts, task playbooks, engineering principles, blast-radius analysis, project verification skills, technical writing and the arena protocol. Not a DDEV add-on: synced automatically by ddev-agents-sync. Add a private repo of your own after it to override or extend. |
 
 ## Uninstallation
 
